@@ -37,9 +37,9 @@ public class Crash
         {
             var json = Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer.Deserialize(
                 Convert.FromBase64String(ExceptionTelemetry));
-            var telems = JsonSerializer.Deserialize<IEnumerable<ExceptionTelemetry>>(json);
+            var telem = JsonSerializer.Deserialize<ExceptionTelemetry>(json);
             // we only expect one per crash object
-            return telems.FirstOrDefault();
+            return telem;
         }
         else
         {

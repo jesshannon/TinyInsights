@@ -415,22 +415,14 @@ public class ApplicationInsightsProvider : IInsightsProvider, ILogger
 
             foreach (var crash in crashes)
             {
-                var ex = crash.GetException();
+                var telem = crash.GetExceptionTelemetry();
 
-                if (ex is null)
+                if (telem is null)
                 {
                     continue;
                 }
 
-                var properties = new Dictionary<string, string>
-                {
-                    { "IsCrash", "true" },
-                    { "StackTrace", crash.StackTrace ?? string.Empty },
-                    { "ExceptionType", crash.ExceptionType },
-                    { "Source", crash.Source ?? string.Empty }
-                };
-
-                await TrackErrorAsync(ex, properties);
+                Client.TrackException(telem);
             }
 
             await FlushAsync();
@@ -470,7 +462,7 @@ public class ApplicationInsightsProvider : IInsightsProvider, ILogger
             {
                 properties.TryAdd("StackTrace", ex.StackTrace);
             }
-
+            
             Client.TrackException(ex, properties);
         }
         catch (Exception exception)
